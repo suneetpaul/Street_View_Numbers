@@ -10,6 +10,7 @@ Needs model.pkl and model_metadata.pkl in the same folder.
 """
 
 import json
+import os
 
 import joblib
 import pandas as pd
@@ -18,16 +19,21 @@ import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Income Estimator", page_icon="💰", layout="centered")
 
+# Resolve paths relative to this script's own folder, not the process cwd.
+# Streamlit Cloud (and some other launchers) run with cwd set to the repo
+# root, which breaks bare relative paths like "model.pkl" whenever app.py
+# lives in a subfolder.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "model.pkl")
+METADATA_PATH = os.path.join(BASE_DIR, "model_metadata.pkl")
 
-import os
-
-for fname in ("model.pkl", "model_metadata.pkl"):
-    if not os.path.exists(fname):
-        st.error(f"Missing required file: {fname}. Found in cwd: {os.listdir('.')}")
+for path in (MODEL_PATH, METADATA_PATH):
+    if not os.path.exists(path):
+        st.error(f"Missing required file: {path}")
         st.stop()
 
-pipeline = joblib.load("model.pkl")
-metadata = joblib.load("model_metadata.pkl")
+pipeline = joblib.load(MODEL_PATH)
+metadata = joblib.load(METADATA_PATH)
 
 education_options = sorted(metadata["education_map"].items(), key=lambda kv: kv[1])
 education_years_by_label = dict(education_options)
