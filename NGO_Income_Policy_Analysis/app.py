@@ -10,6 +10,7 @@ Needs model.pkl and model_metadata.pkl in the same folder.
 """
 
 import json
+import os
 
 import joblib
 import pandas as pd
