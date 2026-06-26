@@ -10,7 +10,6 @@ Needs model.pkl and model_metadata.pkl in the same folder.
 """
 
 import json
-import os
 
 import joblib
 import pandas as pd
@@ -19,9 +18,7 @@ import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Income Estimator", page_icon="💰", layout="centered")
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "model.pkl")
-
-pipeline = keras.models.load_model(MODEL_PATH)
+pipeline = joblib.load("model.pkl")
 metadata = joblib.load("model_metadata.pkl")
 
 education_options = sorted(metadata["education_map"].items(), key=lambda kv: kv[1])
